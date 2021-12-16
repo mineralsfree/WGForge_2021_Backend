@@ -4,6 +4,8 @@
   "description": "WGForge 2021 Frontend Course Final Task Server",
   "main": "index.js",
   "scripts": {
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "pretest": "cross-env NODE_ENV=test npm run seed",
     "seed": "node ./src/models/seeds/seed.js",
     "start": "node app.js"
   },
@@ -22,5 +24,10 @@
     "mongoose": "^6.0.13",
     "swagger-jsdoc": "6.0.7",
     "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^27.4.5",
+    "supertest": "^6.1.6"
   }
 }

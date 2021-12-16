@@ -1,13 +1,12 @@
 const Currency = require('../models/Currency')
 const Product = require('../models/Product')
-const errorTypes = require("../const/errorTypes");
+const NotFoundError = require("../errors/NotFoundError");
 
 
 class AdminService {
   async changeCurrency(code) {
     const currency = await Currency.findOne({code});
-    if (!currency) throw {name: errorTypes.NOT_FOUND, message: 'no such currency'};
-    console.log(currency);
+    if (!currency) throw new NotFoundError('no such currency');
     const result = await Product.updateMany({}, [
       {
         $set: {
@@ -17,6 +16,13 @@ class AdminService {
         }
       }])
     return result;
+  }
+  async addProduct(product){
+    const newProduct = new Product(product);
+    return await newProduct.save();
+  }
+  async setPriority(product_id, order){
+  return Product.updateOne({_id: product_id}, {priority: order});
 
   }
 }

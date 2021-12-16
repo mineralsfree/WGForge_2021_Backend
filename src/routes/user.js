@@ -1,8 +1,7 @@
 const express = require('express');
 const userService = require('../services/userService')
 const router = express.Router();
-const {body, validationResult, query} = require('express-validator');
-const errorTypes = require("../const/errorTypes");
+const {body, validationResult} = require('express-validator');
 
 /**
  * @swagger
@@ -75,7 +74,6 @@ router.post('/auth', async (req, res, next) => {
  */
 router.post('/register',
   body('email').isEmail(),
-  //TODO: make more password rules
   body('password').isLength({min: 5}),
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -113,18 +111,18 @@ router.post('/register',
  */
 router.get('/', async (req, res, next) => {
   const userId = req.user.id;
-  if (userId) {
+  try {
     const user = await userService.getUser(userId);
     res.json(user);
-  } else {
-    throw new Error('Unauthorized')
+  } catch (e) {
+    next(e);
   }
 })
 
 
 /**
  * @swagger
- * /api/user/favorites/{id_product}:
+ * /api/user/favorites/{product_id}:
  *  put:
  *   tags:
  *     - user
@@ -136,7 +134,7 @@ router.get('/', async (req, res, next) => {
  *     required: true
  *     type: string
  *     value: Bearer
- *   - name: id_product
+ *   - name: product_id
  *     in: path
  *     description: ID of product to add to favorites
  *     required: true
@@ -148,16 +146,12 @@ router.get('/', async (req, res, next) => {
  *         description: Product not found
  */
 
-router.put('/favorites/:id_product', async (req, res, next) => {
+router.put('/favorites/:product_id', async (req, res, next) => {
   try {
-    const {id_product} = req.params;
+    const {product_id} = req.params;
     const userId = req.user.id;
-    if (userId) {
-      await userService.addToFavorites(userId, id_product);
-      res.json({success: true});
-    } else {
-      next(new Error("Token is invalid").name = errorTypes.UNAUTHORIZED_ERROR);
-    }
+    await userService.addToFavorites(userId, product_id);
+    res.json({success: true});
   } catch (e) {
     next(e)
   }
@@ -165,11 +159,11 @@ router.put('/favorites/:id_product', async (req, res, next) => {
 
 /**
  * @swagger
- * /api/user/favorites/{id_product}:
+ * /api/user/favorites/{product_id}:
  *  delete:
  *   tags:
  *     - user
- *   summary: Get user info
+ *   summary: removes product from user's favorites
  *   parameters:
  *   - name: Authorization
  *     in: header
@@ -177,7 +171,7 @@ router.put('/favorites/:id_product', async (req, res, next) => {
  *     required: true
  *     type: string
  *     value: Bearer
- *   - name: id_product
+ *   - name: product_id
  *     in: path
  *     description: ID of product to remove from favorites
  *     required: true
@@ -188,23 +182,19 @@ router.put('/favorites/:id_product', async (req, res, next) => {
  *       404:
  *         description: Product not found
  */
-router.delete('/favorites/:id_product', async (req, res, next) => {
+router.delete('/favorites/:product_id', async (req, res, next) => {
   try {
-    const {id_product} = req.params;
+    const {product_id} = req.params;
     const userId = req.user.id;
-    if (userId) {
-      await userService.removeFromFavorites(userId, id_product);
-      res.json({success: true});
-    } else {
-      next(new Error("Token is invalid").name = errorTypes.UNAUTHORIZED_ERROR);
-    }
+    await userService.removeFromFavorites(userId, product_id);
+    res.json({success: true});
   } catch (e) {
     next(e)
   }
 })
 /**
  * @swagger
- * /api/user/cart/{id_product}:
+ * /api/user/cart/{product_id}:
  *  put:
  *   tags:
  *     - user
@@ -216,7 +206,7 @@ router.delete('/favorites/:id_product', async (req, res, next) => {
  *     required: true
  *     type: string
  *     value: Bearer
- *   - name: id_product
+ *   - name: product_id
  *     in: path
  *     description: ID of product to add to cart
  *     required: true
@@ -227,23 +217,20 @@ router.delete('/favorites/:id_product', async (req, res, next) => {
  *       404:
  *         description: Product not found
  */
-router.put('/cart/:id_product', async(req, res, next)=>{
+router.put('/cart/:product_id', async (req, res, next) => {
   try {
-    const {id_product} = req.params;
+    const {product_id} = req.params;
     const userId = req.user.id;
-    if (userId) {
-      await userService.addToCart(userId, id_product);
-      res.json({success: true});
-    } else {
-      next(new Error("Token is invalid").name = errorTypes.UNAUTHORIZED_ERROR);
-    }
+    await userService.addToCart(userId, product_id);
+    res.json({success: true});
+
   } catch (e) {
     next(e)
   }
 })
 /**
  * @swagger
- * /api/user/cart/{id_product}:
+ * /api/user/cart/{product_id}:
  *  delete:
  *   tags:
  *     - user
@@ -255,7 +242,7 @@ router.put('/cart/:id_product', async(req, res, next)=>{
  *     required: true
  *     type: string
  *     value: Bearer
- *   - name: id_product
+ *   - name: product_id
  *     in: path
  *     description: ID of product to remove from cart
  *     required: true
@@ -266,16 +253,12 @@ router.put('/cart/:id_product', async(req, res, next)=>{
  *       404:
  *         description: Product not found
  */
-router.delete('/cart/:id_product', async (req, res, next)=>{
+router.delete('/cart/:product_id', async (req, res, next) => {
   try {
-    const {id_product} = req.params;
+    const {product_id} = req.params;
     const userId = req.user.id;
-    if (userId) {
-      await userService.removeFromCart(userId, id_product);
-      res.json({success: true});
-    } else {
-      next(new Error("Token is invalid").name = errorTypes.UNAUTHORIZED_ERROR);
-    }
+    await userService.removeFromCart(userId, product_id);
+    res.json({success: true});
   } catch (e) {
     next(e)
   }

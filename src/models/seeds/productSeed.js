@@ -1,8 +1,10 @@
 const Product = require('../Product');
-const items = require('./items.json')
+const tanks = require('./vehicle.json')
+const gold = require('./gold.json')
+const premium = require('./premium.json')
 
 async function productSeed(){
-  const itemsArray = Object.keys(items).map(el => items[el]);
+  const itemsArray = Object.keys(tanks).map(el => tanks[el]);
   const filtered = itemsArray.filter(el => el.tier !== 0);
   let maxPrice = 59;
   let minPrice = 9
@@ -10,7 +12,7 @@ async function productSeed(){
     let basePrice = Math.floor(Math.random() * (maxPrice-minPrice) + minPrice) + 0.99;
     let item =  {
       name: product.name,
-      type: 'machinery',
+      type: 'vehicle',
       base_price: basePrice,
       price: {
         code: 'USD',
@@ -35,7 +37,7 @@ async function productSeed(){
   })
   const seedDB = async () => {
     await Product.deleteMany({});
-    await Product.insertMany(mapped)
+    await Product.insertMany([...premium, ...gold, ...mapped ])
   }
   await seedDB()
   console.log('seeded productSeed Successfully')

@@ -1,0 +1,113 @@
+[{
+        "price": {
+            "code": "USD",
+            "amount": 59.99
+        },
+        "name": "12 500 gold",
+        "type": ["gold", "premium"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/a65c703e91c4df7b29653c6c6eb66b2b.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 59.99,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 29.99
+        },
+        "name": "12 500 gold",
+        "type": ["gold"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/3e51f741def7cc4ccc08a55a023f5657.png"
+        ],
+        "details": "Serious set for serious plans. With this amount of in-game gold, you can, for example, buy a premium account for five months or transfer 312,000 units of combat experience to free. And even buy a Tier VIII premium tank. However, there are plenty of options to spend this gold - secure yourself a strategic reserve!",
+        "base_price": 29.99,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 17.99
+        },
+        "name": "7500 gold",
+        "type": "gold",
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/f4a48e1985545fb82fd9079602a27f7d.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 17.99,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 11.99
+        },
+        "name": "5000 gold",
+        "type": ["gold"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/7c0daa59333861a9f74595127d49aa46.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 11.99,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 5.99
+        },
+        "name": "2500 gold",
+        "type": ["gold"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/c293ea638a17c77bb8eb4451efeccef6.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 5.99,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 2.49
+        },
+        "name": "1000 gold",
+        "type": ["gold"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/97017db0d114af0e6ae2a191776ab02b.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 2.49,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    },
+    {
+        "price": {
+            "code": "USD",
+            "amount": 1.19
+        },
+        "name": "500 gold",
+        "type": ["gold"],
+        "images": [
+            "https://catoolwebdav-net-cdn.gcdn.co/catool/c79b74140f47f5c2baee44dcc7331b14.png"
+        ],
+        "details": "Persistence and skill in combat will allow you to explore any branch of technology without any financial costs. However, you can purchase a special in-game currency - gold, which will facilitate your progress in the research tree. Gold is a great opportunity to make the gameplay more comfortable and faster to achieve the desired goal.",
+        "base_price": 1.19,
+        "base_price_discount": 0,
+        "discount": 0,
+        "price_discount": 0
+    }
+]
