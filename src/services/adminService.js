@@ -1,6 +1,7 @@
 const Currency = require('../models/Currency')
 const Product = require('../models/Product')
 const NotFoundError = require("../errors/NotFoundError");
+const UnprocessableError = require("../errors/UnprocessableError");
 
 
 class AdminService {
@@ -17,13 +18,22 @@ class AdminService {
       }])
     return result;
   }
-  async addProduct(product){
+
+  async addProduct(product) {
+    const {base_price_discount, base_price} = product;
+    if (base_price_discount > 0 && base_price_discount > base_price) {
+      throw new UnprocessableError('discount price cannot be < then base price')
+    } else if (base_price_discount > 0){
+        product.discount = Math.floor(1-(base_price_discount/base_price));
+    }
     const newProduct = new Product(product);
     return await newProduct.save();
   }
-  async setPriority(product_id, order){
-  return Product.updateOne({_id: product_id}, {priority: order});
 
+  async setOrder(product_id, order) {
+
+    const product = await Product.updateOne({_id: product_id}, {$set: {order: order, has_order: order > 0}})
+    return product;
   }
 }
 

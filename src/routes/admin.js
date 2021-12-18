@@ -106,11 +106,11 @@ router.put('/product/:product_id/discount', async (req, res, next) => {
 
 /**
  * @swagger
- * /api/admin/product/{product_id}/priority:
+ * /api/admin/product/{product_id}/order:
  *  put:
  *   tags:
  *     - admin
- *   summary: Change priority for product
+ *   summary: Change order for product
  *   parameters:
  *   - name: Authorization
  *     in: header
@@ -128,22 +128,22 @@ router.put('/product/:product_id/discount', async (req, res, next) => {
  *     schema:
  *       type: object
  *       properties:
- *         priority:
+ *         order:
  *           type: number
  *           required: true
  *       example:
- *         priority: 2
+ *         order: 2
  *   responses:
  *     200:
  *       description: Successful request
  *     403:
  *       description: Access forbidden
  */
-router.put('/product/:product_id/priority', async (req, res, next)=>{
+router.put('/product/:product_id/order', async (req, res, next)=>{
   const {product_id} = req.params;
-  const {priority} = req.body;
+  const {order} = req.body;
   try {
-    const result = await adminService.setPriority(product_id, priority);
+    const result = await adminService.setOrder(product_id, order);
     res.json(result);
   } catch (e){
     next(new UnprocessableError(e));

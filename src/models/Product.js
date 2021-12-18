@@ -2,8 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
-    priority:{
-      type: Number
+    order:{
+      type: Number,
+      unique: true,
+      min: 1,
+      sparse: true,
+      max: 99999
+    },
+    has_order: {
+      type: Boolean,
+      default: false
     },
     tier: {
       type: Number,
@@ -35,10 +43,12 @@ const ProductSchema = new Schema({
       enum: ['mediumTank', 'heavyTank', 'lightTank', 'AT-SPG', 'SPG']
     },
     base_price: {
+      min: 0,
       type: Number,
       required: true
     },
     base_price_discount: {
+      min: 0,
       type: Number,
       required: true,
       default: function(){return this.base_price},
@@ -46,6 +56,7 @@ const ProductSchema = new Schema({
     price: {
       code: {type: String, required: true, default: "USD"},
       amount: {
+        min: 0,
         default:  function(){return this.base_price},
         type: Number,
         required: true
@@ -58,7 +69,14 @@ const ProductSchema = new Schema({
       required: true,
       default: 0
     },
+    discount_show_type:{
+      type: String,
+      required: true,
+      default: 'percent',
+      enum: ['percent', 'absolute']
+    },
     price_discount: {
+      min: 0,
       type: Number,
       required: true,
       default:  function(){return this.base_price_discount}
@@ -68,5 +86,5 @@ const ProductSchema = new Schema({
     toJSON: {getters: true}
   });
 const ProductModel = mongoose.model('Product', ProductSchema);
-
+ProductModel.createIndexes();
 module.exports = ProductModel;
