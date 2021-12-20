@@ -100,9 +100,6 @@ router.post('/product', async (req, res, next) => {
   }
 
 })
-router.put('/product/:product_id/discount', async (req, res, next) => {
-  const {product_id} = req.params;
-})
 
 /**
  * @swagger
@@ -139,13 +136,14 @@ router.put('/product/:product_id/discount', async (req, res, next) => {
  *     403:
  *       description: Access forbidden
  */
-router.put('/product/:product_id/order', async (req, res, next)=>{
+router.put('/product/:product_id', async (req, res, next)=>{
   const {product_id} = req.params;
-  const {order} = req.body;
+  const product =   req.body;
   try {
-    const result = await adminService.setOrder(product_id, order);
-    res.json(result);
+    const result = await adminService.updateProduct(product_id, product);
+    res.json({success: true});
   } catch (e){
+    console.error(e);
     next(new UnprocessableError(e));
   }
 })

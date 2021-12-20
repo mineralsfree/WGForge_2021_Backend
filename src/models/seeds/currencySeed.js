@@ -13,6 +13,9 @@ async function currencySeed(){
       minorUnit: currency.minorUnit
     }
   })
+  const usd = itemsArray.find(el=>el.code==="USD")
+  usd.name='current'
+  mapped.push(usd)
   const seedDB = async () => {
     await Currency.deleteMany({});
     await Currency.insertMany(mapped)
