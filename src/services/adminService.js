@@ -3,6 +3,7 @@ const Product = require('../models/Product')
 const NotFoundError = require("../errors/NotFoundError");
 const UnprocessableError = require("../errors/UnprocessableError");
 const mongoose = require('mongoose');
+const User = require("../models/User");
 
 
 class AdminService {
@@ -85,7 +86,18 @@ class AdminService {
     return Product.updateOne({_id: product_id}, update);
   }
   async deleteProduct(product_id){
-    return Product.deleteOne({_id: product_id});
+    const session = await mongoose.startSession()
+    session.startTransaction();
+    try{
+      await User.updateMany({}, {$pull: {'favorites': product_id, 'cart': product_id}});
+      await Product.deleteOne({_id: product_id});
+      await session.commitTransaction();
+      await session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw error;
+    }
   }
 }
 
