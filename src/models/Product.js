@@ -40,7 +40,7 @@ const ProductSchema = new Schema({
     tank_type: {
       type: String,
       required: function (){return this.type === 'vehicle'},
-      enum: ['mediumTank', 'heavyTank', 'lightTank', 'AT-SPG', 'SPG']
+      enum: ['mediumTank', 'heavyTank', 'lightTank', 'AT-SPG', 'SPG', 'multirole']
     },
     base_price: {
       min: 0,

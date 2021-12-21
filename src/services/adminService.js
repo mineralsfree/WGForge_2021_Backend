@@ -2,44 +2,56 @@ const Currency = require('../models/Currency')
 const Product = require('../models/Product')
 const NotFoundError = require("../errors/NotFoundError");
 const UnprocessableError = require("../errors/UnprocessableError");
+const mongoose = require('mongoose');
 
 
 class AdminService {
   async changeCurrency(newCode) {
-    console.log(newCode);
-    const currency = await Currency.findOne({code: newCode});
-    if (!currency) throw new NotFoundError('no such currency');
-   const {rate, inverseRate, minorUnit, code} = currency
-    console.log(currency);
-    await Currency.updateOne({name: 'current'}, {$set: {rate, code, inverseRate, minorUnit, name: 'current'}})
-    const result = await Product.updateMany({}, [
-      {
-        $set: {
-          "price.code": currency.code,
-          "price.amount": {$round: [{$multiply: [currency.rate, "$base_price"]}, currency.minorUnit]},
-          "price_discount": {$round: [{$multiply: [currency.rate, "$base_price_discount"]}, currency.minorUnit]}
+    const session = await mongoose.startSession()
+    session.startTransaction();
+    let result;
+    try {
+      const currency = await Currency.findOne({code: newCode});
+      if (!currency) throw new NotFoundError('no such currency');
+      const {rate, inverseRate, minorUnit, code} = currency;
+      await Currency.updateOne({name: 'current'}, {$set: {rate, code, inverseRate, minorUnit, name: 'current'}})
+      result = await Product.updateMany({}, [
+        {
+          $set: {
+            "price.code": currency.code,
+            "price.amount": {$round: [{$multiply: [currency.rate, "$base_price"]}, currency.minorUnit]},
+            "price_discount": {$round: [{$multiply: [currency.rate, "$base_price_discount"]}, currency.minorUnit]}
+          }
         }
-      }])
-    console.log(result);
+      ])
+      await session.commitTransaction();
+      await session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw error;
+    }
     return result;
   }
 
   async addProduct(product) {
     const currency = await Currency.findOne({name: 'current'});
     const {rate, code} = currency
+    const base_price = Number(product.base_price)
+    const base_price_discount = Number(product.base_price_discount);
     const newProduct = {...product};
     newProduct.price = {};
-    newProduct.price.amount = rate * Number(newProduct.base_price);
     newProduct.price.code = code;
-    newProduct.price_discount = rate * Number(newProduct.base_price_discount);
+    newProduct.price.amount = Number((rate * base_price).toFixed(currency.minorUnit));
+    newProduct.price_discount = Number((rate * base_price_discount).toFixed(currency.minorUnit));
     if (newProduct.order > 0) {
       newProduct.has_order = true;
     } else {
       delete newProduct.order;
 
     }
-    if (newProduct.price.amount < newProduct.price_discount) {
-      throw new UnprocessableError('discount price cannot be < then base price')
+    if (newProduct.price.amount <= newProduct.price_discount) {
+      throw new UnprocessableError('discount price cannot be smaller or equal then base price')
     }
     const mongoProduct = new Product(newProduct);
     return await mongoProduct.save();
@@ -47,23 +59,33 @@ class AdminService {
 
   async updateProduct(product_id, product) {
     const currency = await Currency.findOne({name: 'current'});
-    const {rate, code} = currency
-    const updateProduct = {...product};
-    updateProduct.price = {};
-    updateProduct.price.amount = rate * Number(updateProduct.base_price);
-    updateProduct.price.code = code;
-    updateProduct.price_discount = rate * Number(updateProduct.base_price_discount);
-    if (updateProduct.price.amount < updateProduct.price_discount) {
-      throw new UnprocessableError('price can not be smaller than discount price ')
+    const {rate, code, minorUnit} = currency
+    const base_price = Number((rate * product.base_price).toFixed(minorUnit));
+    const base_price_discount = Number((rate * product.base_price_discount).toFixed(minorUnit))
+    const {order} = product;
+    if (base_price <= base_price_discount) {
+      throw new UnprocessableError('price can not be smaller or equal than discount price')
     }
-    let update;
-    if (updateProduct && updateProduct.order > 0) {
-      update = {$set: {...updateProduct, has_order: true}};
+    delete product.order;
+    let update = {
+      $set: {
+        ...product,
+        "price.code": code,
+        "price.amount": base_price,
+        "price_discount": base_price_discount
+      }
+    };
+    if (order > 0) {
+      update.$set.has_order = true;
+      update.order = order;
     } else {
-      delete updateProduct.order;
-      update = {$set: {...updateProduct, has_order: false}, $unset: {order: ""}}
+      update.$set.has_order = false;
+      update.$unset = {order: ""}
     }
     return Product.updateOne({_id: product_id}, update);
+  }
+  async deleteProduct(product_id){
+    return Product.deleteOne({_id: product_id});
   }
 }
 

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const adminService = require('../services/adminService')
 const UnprocessableError = require("../errors/UnprocessableError");
+const NotFoundError = require("../errors/NotFoundError");
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ router.put('/settings/currency', async (req, res, next) => {
  *  post:
  *   tags:
  *     - admin
- *   summary: Add product to cart
+ *   summary: Add product to store
  *   parameters:
  *   - name: Authorization
  *     in: header
@@ -103,11 +104,11 @@ router.post('/product', async (req, res, next) => {
 
 /**
  * @swagger
- * /api/admin/product/{product_id}/order:
+ * /api/admin/product/{product_id}:
  *  put:
  *   tags:
  *     - admin
- *   summary: Change order for product
+ *   summary: Update product to store
  *   parameters:
  *   - name: Authorization
  *     in: header
@@ -117,7 +118,7 @@ router.post('/product', async (req, res, next) => {
  *     value: Bearer
  *   - name: product_id
  *     in: path
- *     description: ID of product to remove from cart
+ *     description: ID of product to add to favorites
  *     required: true
  *     type: string
  *   - name: params
@@ -125,16 +126,31 @@ router.post('/product', async (req, res, next) => {
  *     schema:
  *       type: object
  *       properties:
- *         order:
+ *         name:
+ *           type: string
+ *           required: true
+ *         type:
+ *           type: string
+ *           required: true
+ *         details:
+ *           type: string
+ *           required: true
+ *         base_price:
  *           type: number
  *           required: true
  *       example:
- *         order: 2
+ *         name: t-43
+ *         type: vehicle
+ *         details: cool tank
+ *         base_price: 123
+ *         tier: 1
+ *         nation: uk
+ *         tank_type: heavyTank
  *   responses:
  *     200:
  *       description: Successful request
- *     403:
- *       description: Access forbidden
+ *     422:
+ *       description: Unprocessable entity
  */
 router.put('/product/:product_id', async (req, res, next)=>{
   const {product_id} = req.params;
@@ -145,6 +161,40 @@ router.put('/product/:product_id', async (req, res, next)=>{
   } catch (e){
     console.error(e);
     next(new UnprocessableError(e));
+  }
+})
+/**
+ * @swagger
+ * /api/admin/product/{product_id}:
+ *  delete:
+ *   tags:
+ *     - admin
+ *   summary: Delete product from store
+ *   parameters:
+ *   - name: Authorization
+ *     in: header
+ *     description: an authorization header "Bearer 'access token'"
+ *     required: true
+ *     type: string
+ *     value: Bearer
+ *   - name: product_id
+ *     in: path
+ *     description: ID of product to add to favorites
+ *     required: true
+ *     type: string
+ *   responses:
+ *     200:
+ *       description: Successful request
+ *     404:
+ *       description: Product not found
+ */
+router.delete('/product/:product_id', async (req, res, next)=>{
+  const {product_id} = req.params;
+  try {
+     await adminService.deleteProduct(product_id);
+    res.json({success: true});
+  } catch (e){
+    next(new NotFoundError(e));
   }
 })
 module.exports = router
